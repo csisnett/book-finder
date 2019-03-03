@@ -148,10 +148,11 @@
       
     let search = getQueryVariable("search")
     let quantity = getQueryVariable("quantity")
-    
+    console.log(search)
     if (typeof search !== "undefined") {
       if (search !== false) {
-      document.getElementById("search").value = decodeURIComponent(search)
+        let new_value = search.replace('+', ' ')
+      document.getElementById("search").value = decodeURIComponent(new_value)
       }
       if (quantity !== false) {
         start_search(search, quantity)
