@@ -150,7 +150,9 @@
     let quantity = getQueryVariable("quantity")
     
     if (typeof search !== "undefined") {
+      if (search !== false) {
       document.getElementById("search").value = decodeURIComponent(search)
+      }
       if (quantity !== false) {
         start_search(search, quantity)
         document.getElementById("quantity").value = quantity
