@@ -34,10 +34,10 @@ var book_state = {
 }
   
 let search = getQueryVariable("search")
-  console.log(search)
+  
 
 if (typeof search !== "undefined") {
-
+  start_search(search)
 }
 
   function show_next(data_object) {
@@ -56,12 +56,12 @@ if (typeof search !== "undefined") {
     }
     /* document.getElementById("search").value */
   async function start_search(search) {
-    let books = await search_book()
+    let books = await search_book(search)
     render_books(books)
   }
   async function search_book(query) {
     var response = {}
-    api_endpoint = "https://www.googleapis.com/books/v1/volumes?q=" + encodeURI(query)
+    api_endpoint = "https://www.googleapis.com/books/v1/volumes?q=" + query
     return fetchAsync(api_endpoint).then(data => book_state.data = data)
     
 
@@ -153,9 +153,15 @@ if (typeof search !== "undefined") {
     return div1
   }
 
-  function make_img(thumbnail) {
+  function make_img(link) {
     let img = document.createElement('img')
-    img.setAttribute("src", thumbnail)
+    if (typeof link !== 'undefined') {
+      img.setAttribute("src", link.thumbnail)
+    }
+    else {
+      img.setAttribute("src",  "https://www.wildhareboca.com/wp-content/uploads/sites/310/2018/03/image-not-available.jpg")
+    }
+    
     img.setAttribute("alt", "")
     img.classList.add("card-img-top")
     return img
@@ -188,7 +194,7 @@ if (typeof search !== "undefined") {
     div1.appendChild(h4)
     div1.appendChild(h5)
     div1.appendChild(p1)
-    let img = make_img(book.volumeInfo.imageLinks.thumbnail)
+    let img = make_img(book.volumeInfo.imageLinks)
     let a2 = make_a2(book.volumeInfo.infoLink)
     a2.appendChild(img)
 
@@ -203,6 +209,7 @@ if (typeof search !== "undefined") {
   }
 
   /*
+  Example of the div the previous function creates
   <div class="col-lg-4 col-md-6 mb-4">
             <div class="card h-100">
               <a href="#"><img class="card-img-top" src="http://books.google.com/books/content?id=2zgRDXFWkm8C&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt=""></a>
@@ -266,9 +273,13 @@ if (typeof search !== "undefined") {
                 <input type="image" src="https://img.icons8.com/material/24/000000/search.png" alt="Submit">
               </a>
           </form>
-            <a href="#" class="list-group-item">Category 1</a>
-          <a href="#" class="list-group-item">Category 2</a>
-          <a href="#" class="list-group-item">Category 3</a>
+            <a href="?search=art" class="list-group-item">Art</a>
+          <a href="?search=startup" class="list-group-item">Start up</a>
+          <a href="?search=music" class="list-group-item">Music</a>
+          <a href="?search=Business" class="list-group-item">Business</a>
+          <a href="?search=Software%20Practices" class="list-group-item">Software Practices</a>
+          <a href="?search=Elixir%20Programming" class="list-group-item">Elixir Programming</a>
+          <a href="?search=Biographies" class="list-group-item">Biographies</a>
         </div>
 
       </div>
@@ -304,168 +315,6 @@ if (typeof search !== "undefined") {
         </div>
 
         <div id="bookdiv" class="row">
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://books.google.com/books/content?id=2zgRDXFWkm8C&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="#">Harry Potter y la Piedra filosofal</a>
-                </h4>
-                <h5>Written by J.K Rowling</h5>
-                <p class="card-text">Editorial San Pablo</p>
-              </div>
-      
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://books.google.com/books/content?id=DKcWE3WXoj8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="#">Item Two</a>
-                </h4>
-                <h5>$24.99</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur! Lorem ipsum dolor sit amet.</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://books.google.com/books/content?id=q8XweiNdep8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="#">Item Three</a>
-                </h4>
-                <h5>$24.99</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="#">Item Four</a>
-                </h4>
-                <h5>$24.99</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="#">Item Five</a>
-                </h4>
-                <h5>$24.99</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur! Lorem ipsum dolor sit amet.</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="#">Item Six</a>
-                </h4>
-                <h5>$24.99</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-              </div>
-            </div>
-          </div>
-
-
-          <div class="col-lg-4 col-md-6 mb-4">
-              <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-                <div class="card-body">
-                  <h4 class="card-title">
-                    <a href="#">Item Six</a>
-                  </h4>
-                  <h5>$24.99</h5>
-                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-                </div>
-                <div class="card-footer">
-                  <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-                </div>
-              </div>
-            </div>
-
-
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100">
-                  <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-                  <div class="card-body">
-                    <h4 class="card-title">
-                      <a href="#">Item Six</a>
-                    </h4>
-                    <h5>$24.99</h5>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-                  </div>
-                  <div class="card-footer">
-                    <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-                  </div>
-                </div>
-              </div>
-
-
-              <div class="col-lg-4 col-md-6 mb-4">
-                  <div class="card h-100">
-                    <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-                    <div class="card-body">
-                      <h4 class="card-title">
-                        <a href="#">Item Six</a>
-                      </h4>
-                      <h5>$24.99</h5>
-                      <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-                    </div>
-                    <div class="card-footer">
-                      <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-                    </div>
-                  </div>
-                </div>
-
-
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card h-100">
-                      <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-                      <div class="card-body">
-                        <h4 class="card-title">
-                          <a href="#">Item Six</a>
-                        </h4>
-                        <h5>$24.99</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-                      </div>
-                      <div class="card-footer">
-                        <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-                      </div>
-                    </div>
-                  </div>
 
 
         </div>
