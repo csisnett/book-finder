@@ -54,7 +54,7 @@
           <form>
               
               <input id="quantity" type="number" name="quantity" min="1" value="10"> books
-              <input type="text" id="search" name="search" required minlength="4" maxlength="100" size="25">
+              <input type="text" id="search" name="search" required minlength="1" maxlength="100" size="25">
               <a href="#">
                 <input type="image" src="https://img.icons8.com/material/24/000000/search.png" alt="Submit">
               </a>
@@ -150,6 +150,7 @@
     let quantity = getQueryVariable("quantity")
     
     if (typeof search !== "undefined") {
+      document.getElementById("search").value = decodeURIComponent(search)
       if (quantity !== false) {
         start_search(search, quantity)
         document.getElementById("quantity").value = quantity
