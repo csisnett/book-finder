@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Book Finder</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/shop-homepage.css" rel="stylesheet">
+<script> 
+
+var book_state = {
+  data: {},
+  last_series: 1,
+  }
+
+  function getQueryVariable(variable)
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+}
+  
+let search = getQueryVariable("search")
+  console.log(search)
+
+if (typeof search !== "undefined") {
+
+}
+
+  function show_next(data_object) {
+    books = get_books(data_object)
+    produce_bookshelf(books)
+  }
+  
+  // [] -> [] with relevant data
+  // receives a list of 10 books and output the 10 books relevant data only
+  function get_relevant_data(list_of_books) {
+    
+    }
+  // [] -> html elements
+  function produce_bookshelf(books) {
+    
+    }
+    /* document.getElementById("search").value */
+  async function start_search(search) {
+    let books = await search_book()
+    render_books(books)
+  }
+  async function search_book(query) {
+    var response = {}
+    api_endpoint = "https://www.googleapis.com/books/v1/volumes?q=" + encodeURI(query)
+    return fetchAsync(api_endpoint).then(data => book_state.data = data)
+    
+
+  }
+
+  async function fetchAsync(url){
+    let response = await fetch(url);
+    let data = await response.json();
+    return data;
+  }
+
+  function render_books(books) {
+    let fragment = document.createDocumentFragment();
+
+    let row = document.getElementById("bookdiv");
+    while (row.firstChild) {
+      row.removeChild(row.firstChild)
+    }
+    
+    //const result  = produce_card(books, 9, "")
+    console.log(books.items[0])
+
+     for (var index = 0; index < 10; index++) {
+      console.log(books)
+
+      fragment.appendChild(render_book(books.items[index]))
+
+    }
+    
+    //fragment.appendChild(result)
+    row.appendChild(fragment)
+    console.log(row)
+  }
+
+
+   // -> fragment
+  function produce_card(books, number, result) {
+    console.log(books)
+    if (number > 0) {
+      produce_card(books, number - 1, result += render_book(books.items[number] ))
+    } else {
+      return result
+    }
+  }
+
+  function make_a2(book_link) {
+    let a2 = document.createElement('a')
+    a2.setAttribute("href", book_link)
+    return a2
+  }
+
+  function make_a1(address, title) {
+    let a1 = document.createElement('a')
+    a1.setAttribute("href", address )
+    a1.innerText = title
+
+    return a1
+  }
+
+  function make_h4() {
+    let h4 = document.createElement('h4')
+    h4.classList.add("card-title")
+    return h4
+  }
+
+  function make_h5(authors){
+    let h5 = document.createElement('h5')
+    if (typeof authors !== 'undefined') {
+      
+      h5.innerText = 'Written by' + authors[0]
+    }
+    else {
+      h5.innetText = 'Without an author'
+    }
+    
+    return h5
+  }
+
+  function make_p1(publisher) {
+    let p1 = document.createElement('p')
+    p1.innerText = publisher
+    p1.classList.add("card-text")
+    return p1
+  }
+
+  function make_div1() {
+    let div1 = document.createElement('div');
+    div1.classList.add("card-body")
+    return div1
+  }
+
+  function make_img(thumbnail) {
+    let img = document.createElement('img')
+    img.setAttribute("src", thumbnail)
+    img.setAttribute("alt", "")
+    img.classList.add("card-img-top")
+    return img
+  }
+
+  function make_div3() {
+    let div3 = document.createElement('div');
+    div3.classList.add("card")
+    div3.classList.add("h-100")
+    return div3
+  }
+
+  function make_div4() {
+    let div4 = document.createElement('div');
+    div4.classList.add("col-lg-4")
+    div4.classList.add("col-md-6")
+    div4.classList.add("mb-4")
+    return div4
+  }
+
+  function render_book(book) {
+    // all nodes insertions happen on this function
+    let a1 = make_a1(book.volumeInfo.infoLink, book.volumeInfo.title)
+    let h4 = make_h4()
+    h4.appendChild(a1)
+    let h5 = make_h5(book.volumeInfo.authors)
+    let p1 = make_p1(book.volumeInfo.publisher)
+
+    let div1 = make_div1()
+    div1.appendChild(h4)
+    div1.appendChild(h5)
+    div1.appendChild(p1)
+    let img = make_img(book.volumeInfo.imageLinks.thumbnail)
+    let a2 = make_a2(book.volumeInfo.infoLink)
+    a2.appendChild(img)
+
+    //var div2 = document.createElement('div')
+    //div2.classList("card-footer")
+    let div3 = make_div3()
+    div3.appendChild(a2)
+    div3.appendChild(div1)
+    let div4 = make_div4()
+    div4.appendChild(div3)
+    return div4
+  }
+
+  /*
+  <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+              <a href="#"><img class="card-img-top" src="http://books.google.com/books/content?id=2zgRDXFWkm8C&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt=""></a>
+              <div class="card-body">
+                <h4 class="card-title">
+                  <a href="#">Harry Potter y la Piedra filosofal</a>
+                </h4>
+                <h5>Written by J.K Rowling</h5>
+                <p class="card-text">Editorial San Pablo</p>
+              </div>
+      
+            </div>
+          </div>
+  */
+
+</script>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Book Finder</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <div class="row">
+
+      <div class="col-lg-4">
+              
+        <h1 class="my-4">Search</h1>
+        <div class="list-group">
+          <form>
+              <input type="text" id="search" name="search" required minlength="4" maxlength="100" size="25">
+              <a href="#">
+                <input type="image" src="https://img.icons8.com/material/24/000000/search.png" alt="Submit">
+              </a>
+          </form>
+            <a href="#" class="list-group-item">Category 1</a>
+          <a href="#" class="list-group-item">Category 2</a>
+          <a href="#" class="list-group-item">Category 3</a>
+        </div>
+
+      </div>
+      <!-- /.col-lg-3 -->
+
+      <div class="col-lg-8">
+
+        <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
+          <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+          </ol>
+          <div class="carousel-inner" role="listbox">
+            <div class="carousel-item active">
+              <img class="d-block img-fluid" src="https://i.ebayimg.com/00/s/NzY4WDEwMjQ=/z/gfsAAOSwu4hayfF8/$_86.JPG" alt="First slide">
+            </div>
+            <div class="carousel-item">
+              <img class="d-block img-fluid" src="https://brightbusiness.net.au/wp-content/uploads/2018/02/Books_to_Find_Your_Flow-1024x768.jpg" alt="Second slide">
+            </div>
+            <div class="carousel-item">
+              <img class="d-block img-fluid" src="https://images-na.ssl-images-amazon.com/images/I/613bgfRObeL.jpg" alt="Third slide">
+            </div>
+          </div>
+          <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+
+        <div id="bookdiv" class="row">
+
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+              <a href="#"><img class="card-img-top" src="http://books.google.com/books/content?id=2zgRDXFWkm8C&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt=""></a>
+              <div class="card-body">
+                <h4 class="card-title">
+                  <a href="#">Harry Potter y la Piedra filosofal</a>
+                </h4>
+                <h5>Written by J.K Rowling</h5>
+                <p class="card-text">Editorial San Pablo</p>
+              </div>
+      
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+              <a href="#"><img class="card-img-top" src="http://books.google.com/books/content?id=DKcWE3WXoj8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt=""></a>
+              <div class="card-body">
+                <h4 class="card-title">
+                  <a href="#">Item Two</a>
+                </h4>
+                <h5>$24.99</h5>
+                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur! Lorem ipsum dolor sit amet.</p>
+              </div>
+              <div class="card-footer">
+                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+              <a href="#"><img class="card-img-top" src="http://books.google.com/books/content?id=q8XweiNdep8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt=""></a>
+              <div class="card-body">
+                <h4 class="card-title">
+                  <a href="#">Item Three</a>
+                </h4>
+                <h5>$24.99</h5>
+                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
+              </div>
+              <div class="card-footer">
+                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+              <div class="card-body">
+                <h4 class="card-title">
+                  <a href="#">Item Four</a>
+                </h4>
+                <h5>$24.99</h5>
+                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
+              </div>
+              <div class="card-footer">
+                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+              <div class="card-body">
+                <h4 class="card-title">
+                  <a href="#">Item Five</a>
+                </h4>
+                <h5>$24.99</h5>
+                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur! Lorem ipsum dolor sit amet.</p>
+              </div>
+              <div class="card-footer">
+                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+              <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+              <div class="card-body">
+                <h4 class="card-title">
+                  <a href="#">Item Six</a>
+                </h4>
+                <h5>$24.99</h5>
+                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
+              </div>
+              <div class="card-footer">
+                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+                <div class="card-body">
+                  <h4 class="card-title">
+                    <a href="#">Item Six</a>
+                  </h4>
+                  <h5>$24.99</h5>
+                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
+                </div>
+                <div class="card-footer">
+                  <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                  <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+                  <div class="card-body">
+                    <h4 class="card-title">
+                      <a href="#">Item Six</a>
+                    </h4>
+                    <h5>$24.99</h5>
+                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
+                  </div>
+                  <div class="card-footer">
+                    <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="col-lg-4 col-md-6 mb-4">
+                  <div class="card h-100">
+                    <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+                    <div class="card-body">
+                      <h4 class="card-title">
+                        <a href="#">Item Six</a>
+                      </h4>
+                      <h5>$24.99</h5>
+                      <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
+                    </div>
+                    <div class="card-footer">
+                      <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                      <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+                      <div class="card-body">
+                        <h4 class="card-title">
+                          <a href="#">Item Six</a>
+                        </h4>
+                        <h5>$24.99</h5>
+                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
+                      </div>
+                      <div class="card-footer">
+                        <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+                      </div>
+                    </div>
+                  </div>
+
+
+        </div>
+        <!-- /.row -->
+
+      </div>
+      <!-- /.col-lg-9 -->
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; BookFinder 2019</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
