@@ -15,217 +15,7 @@
 
   <!-- Custom styles for this template -->
   <link href="css/shop-homepage.css" rel="stylesheet">
-<script> 
 
-var book_state = {
-  data: {},
-  last_series: 1,
-  }
-
-  function getQueryVariable(variable)
-{
-       var query = window.location.search.substring(1);
-       var vars = query.split("&");
-       for (var i=0;i<vars.length;i++) {
-               var pair = vars[i].split("=");
-               if(pair[0] == variable){return pair[1];}
-       }
-       return(false);
-}
-  
-let search = getQueryVariable("search")
-  
-
-if (typeof search !== "undefined") {
-  start_search(search)
-}
-
-  function show_next(data_object) {
-    books = get_books(data_object)
-    produce_bookshelf(books)
-  }
-  
-  // [] -> [] with relevant data
-  // receives a list of 10 books and output the 10 books relevant data only
-  function get_relevant_data(list_of_books) {
-    
-    }
-  // [] -> html elements
-  function produce_bookshelf(books) {
-    
-    }
-    /* document.getElementById("search").value */
-  async function start_search(search) {
-    let books = await search_book(search)
-    render_books(books)
-  }
-  async function search_book(query) {
-    var response = {}
-    api_endpoint = "https://www.googleapis.com/books/v1/volumes?q=" + query
-    return fetchAsync(api_endpoint).then(data => book_state.data = data)
-    
-
-  }
-
-  async function fetchAsync(url){
-    let response = await fetch(url);
-    let data = await response.json();
-    return data;
-  }
-
-  function render_books(books) {
-    let fragment = document.createDocumentFragment();
-
-    let row = document.getElementById("bookdiv");
-    while (row.firstChild) {
-      row.removeChild(row.firstChild)
-    }
-    
-    //const result  = produce_card(books, 9, "")
-    console.log(books.items[0])
-
-     for (var index = 0; index < 10; index++) {
-      console.log(books)
-
-      fragment.appendChild(render_book(books.items[index]))
-
-    }
-    
-    //fragment.appendChild(result)
-    row.appendChild(fragment)
-    console.log(row)
-  }
-
-
-   // -> fragment
-  function produce_card(books, number, result) {
-    console.log(books)
-    if (number > 0) {
-      produce_card(books, number - 1, result += render_book(books.items[number] ))
-    } else {
-      return result
-    }
-  }
-
-  function make_a2(book_link) {
-    let a2 = document.createElement('a')
-    a2.setAttribute("href", book_link)
-    return a2
-  }
-
-  function make_a1(address, title) {
-    let a1 = document.createElement('a')
-    a1.setAttribute("href", address )
-    a1.innerText = title
-
-    return a1
-  }
-
-  function make_h4() {
-    let h4 = document.createElement('h4')
-    h4.classList.add("card-title")
-    return h4
-  }
-
-  function make_h5(authors){
-    let h5 = document.createElement('h5')
-    if (typeof authors !== 'undefined') {
-      
-      h5.innerText = 'Written by' + authors[0]
-    }
-    else {
-      h5.innetText = 'Without an author'
-    }
-    
-    return h5
-  }
-
-  function make_p1(publisher) {
-    let p1 = document.createElement('p')
-    p1.innerText = publisher
-    p1.classList.add("card-text")
-    return p1
-  }
-
-  function make_div1() {
-    let div1 = document.createElement('div');
-    div1.classList.add("card-body")
-    return div1
-  }
-
-  function make_img(link) {
-    let img = document.createElement('img')
-    if (typeof link !== 'undefined') {
-      img.setAttribute("src", link.thumbnail)
-    }
-    else {
-      img.setAttribute("src",  "https://www.wildhareboca.com/wp-content/uploads/sites/310/2018/03/image-not-available.jpg")
-    }
-    
-    img.setAttribute("alt", "")
-    img.classList.add("card-img-top")
-    return img
-  }
-
-  function make_div3() {
-    let div3 = document.createElement('div');
-    div3.classList.add("card")
-    div3.classList.add("h-100")
-    return div3
-  }
-
-  function make_div4() {
-    let div4 = document.createElement('div');
-    div4.classList.add("col-lg-4")
-    div4.classList.add("col-md-6")
-    div4.classList.add("mb-4")
-    return div4
-  }
-
-  function render_book(book) {
-    // all nodes insertions happen on this function
-    let a1 = make_a1(book.volumeInfo.infoLink, book.volumeInfo.title)
-    let h4 = make_h4()
-    h4.appendChild(a1)
-    let h5 = make_h5(book.volumeInfo.authors)
-    let p1 = make_p1(book.volumeInfo.publisher)
-
-    let div1 = make_div1()
-    div1.appendChild(h4)
-    div1.appendChild(h5)
-    div1.appendChild(p1)
-    let img = make_img(book.volumeInfo.imageLinks)
-    let a2 = make_a2(book.volumeInfo.infoLink)
-    a2.appendChild(img)
-
-    //var div2 = document.createElement('div')
-    //div2.classList("card-footer")
-    let div3 = make_div3()
-    div3.appendChild(a2)
-    div3.appendChild(div1)
-    let div4 = make_div4()
-    div4.appendChild(div3)
-    return div4
-  }
-
-  /*
-  Example of the div the previous function creates
-  <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="http://books.google.com/books/content?id=2zgRDXFWkm8C&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt=""></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="#">Harry Potter y la Piedra filosofal</a>
-                </h4>
-                <h5>Written by J.K Rowling</h5>
-                <p class="card-text">Editorial San Pablo</p>
-              </div>
-      
-            </div>
-          </div>
-  */
-
-</script>
 </head>
 
 <body>
@@ -244,15 +34,6 @@ if (typeof search !== "undefined") {
               <span class="sr-only">(current)</span>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Services</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contact</a>
-          </li>
         </ul>
       </div>
     </div>
@@ -268,6 +49,8 @@ if (typeof search !== "undefined") {
         <h1 class="my-4">Search</h1>
         <div class="list-group">
           <form>
+              Show
+              <input id="quantity" type="number" name="quantity" min="1" value="10"> books
               <input type="text" id="search" name="search" required minlength="4" maxlength="100" size="25">
               <a href="#">
                 <input type="image" src="https://img.icons8.com/material/24/000000/search.png" alt="Submit">
@@ -342,5 +125,195 @@ if (typeof search !== "undefined") {
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 </body>
+<script> 
+
+    var book_state = {
+      data: {},
+      last_series: 1,
+      }
+    
+      function getQueryVariable(variable)
+    {
+           var query = window.location.search.substring(1);
+           var vars = query.split("&");
+           for (var i=0;i<vars.length;i++) {
+                   var pair = vars[i].split("=");
+                   if(pair[0] == variable){return pair[1];}
+           }
+           return(false);
+    }
+      
+    let search = getQueryVariable("search")
+    let quantity = getQueryVariable("quantity")
+    
+    if (typeof search !== "undefined") {
+      if (quantity !== false) {
+        start_search(search, quantity)
+        document.getElementById("quantity").value = quantity
+        
+    }
+      else {
+        start_search(search, '10')
+      }
+      
+    }
+    
+    
+      
+      async function start_search(search, quantity) {
+        let books = await search_book(search, quantity)
+        
+        render_books(books, quantity)
+      }
+    
+      async function search_book(query, quantity) {
+        var response = {}
+        api_endpoint = "https://www.googleapis.com/books/v1/volumes?q=" + query + '&' + 'maxResults=' + quantity
+        return fetchAsync(api_endpoint).then(data => book_state.data = data)
+      }
+    
+      async function fetchAsync(url){
+        let response = await fetch(url);
+        let data = await response.json();
+        return data;
+      }
+    
+      function remove_current_books(row) {
+        while (row.firstChild) {
+          row.removeChild(row.firstChild)
+        }
+      }
+    
+      function render_books(books, quantity) {
+        let fragment = document.createDocumentFragment();
+        let row = document.getElementById("bookdiv");
+        remove_current_books(row)
+      
+         for (var index = 0; index < quantity; index++) {
+          fragment.appendChild(render_book(books.items[index]))
+        }
+        
+        row.appendChild(fragment)
+      }
+    
+      function make_a2(book_link) {
+        let a2 = document.createElement('a')
+        a2.setAttribute("href", book_link)
+        return a2
+      }
+    
+      function make_a1(address, title) {
+        let a1 = document.createElement('a')
+        a1.setAttribute("href", address )
+        a1.innerText = title
+    
+        return a1
+      }
+    
+      function make_h4() {
+        let h4 = document.createElement('h4')
+        h4.classList.add("card-title")
+        return h4
+      }
+    
+      function make_h5(authors){
+        let h5 = document.createElement('h5')
+        if (typeof authors !== 'undefined') {
+          
+          h5.innerText = 'Written by' + authors[0]
+        }
+        else {
+          h5.innetText = 'Without an author'
+        }
+        
+        return h5
+      }
+    
+      function make_p1(publisher) {
+        let p1 = document.createElement('p')
+        p1.innerText = publisher
+        p1.classList.add("card-text")
+        return p1
+      }
+    
+      function make_div1() {
+        let div1 = document.createElement('div');
+        div1.classList.add("card-body")
+        return div1
+      }
+    
+      function make_img(link) {
+        let img = document.createElement('img')
+        if (typeof link !== 'undefined') {
+          img.setAttribute("src", link.thumbnail)
+        }
+        else {
+          img.setAttribute("src",  "https://www.wildhareboca.com/wp-content/uploads/sites/310/2018/03/image-not-available.jpg")
+        }
+        
+        img.setAttribute("alt", "")
+        img.classList.add("card-img-top")
+        return img
+      }
+    
+      function make_div3() {
+        let div3 = document.createElement('div');
+        div3.classList.add("card")
+        div3.classList.add("h-100")
+        return div3
+      }
+    
+      function make_div4() {
+        let div4 = document.createElement('div');
+        div4.classList.add("col-lg-4")
+        div4.classList.add("col-md-6")
+        div4.classList.add("mb-4")
+        return div4
+      }
+    
+      function render_book(book) {
+        // all nodes insertions happen on this function
+        let a1 = make_a1(book.volumeInfo.infoLink, book.volumeInfo.title)
+        let h4 = make_h4()
+        h4.appendChild(a1)
+        let h5 = make_h5(book.volumeInfo.authors)
+        let p1 = make_p1(book.volumeInfo.publisher)
+    
+        let div1 = make_div1()
+        div1.appendChild(h4)
+        div1.appendChild(h5)
+        div1.appendChild(p1)
+        let img = make_img(book.volumeInfo.imageLinks)
+        let a2 = make_a2(book.volumeInfo.infoLink)
+        a2.appendChild(img)
+    
+        //var div2 = document.createElement('div')
+        //div2.classList("card-footer")
+        let div3 = make_div3()
+        div3.appendChild(a2)
+        div3.appendChild(div1)
+        let div4 = make_div4()
+        div4.appendChild(div3)
+        return div4
+      }
+    
+      /*
+      Example of the div the previous function creates
+      <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                  <a href="#"><img class="card-img-top" src="http://books.google.com/books/content?id=2zgRDXFWkm8C&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt=""></a>
+                  <div class="card-body">
+                    <h4 class="card-title">
+                      <a href="#">Harry Potter y la Piedra filosofal</a>
+                    </h4>
+                    <h5>Written by J.K Rowling</h5>
+                    <p class="card-text">Editorial San Pablo</p>
+                  </div>
+          
+                </div>
+              </div>
+      */
+    
+    </script>
 
 </html>
